@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAAM - Animal Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* === AUTH STYLES === */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .auth-box {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            max-width: 420px;
+            width: 100%;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            font-size: 3em;
+            color: #2E7D32;
+            margin-bottom: 10px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2E7D32;
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .message.error {
+            background: #ffebee;
+            color: #c62828;
+            display: block;
+        }
+
+        .message.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            display: block;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #E53935 0%, #C62828 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+        }
+
+        .toggle-text {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .toggle-text a {
+            color: #2E7D32;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .toggle-text a:hover {
+            text-decoration: underline;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* === APP STYLES === */
+        .app-container {
+            display: none;
+        }
+
+        .app-container.active {
+            display: block;
+        }
+
+        .app-header {
+            background: white;
+            padding: 25px 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-header h1 {
+            color: #2E7D32;
+            font-size: 2em;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .user-info {
+            color: #666;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            padding: 10px 25px;
+            background: #D32F2F;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: #B71C1C;
+            transform: translateY(-2px);
+        }
+
+        .add-btn {
+            display: block;
+            margin: 0 auto 30px;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #43A047 0%, #2E7D32 100%);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(67, 160, 71, 0.4);
+        }
+
+        .add-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(67, 160, 71, 0.5);
+        }
+
+        .animals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .animal-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .animal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .animal-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+
+        .animal-info {
+            padding: 15px;
+            text-align: center;
+        }
+
+        .animal-info h3 {
+            color: #1B5E20;
+            font-size: 1.3em;
+            margin-bottom: 5px;
+        }
+
+        .animal-info p {
+            color: #666;
+            font-size: 13px;
+        }
+
+        /* === MODAL === */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .modal-header h2 {
+            color: #333;
+            font-size: 1.8em;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .photo-preview {
+            margin-top: 10px;
+            display: none;
+        }
+
+        .photo-preview img {
+            max-width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .injections-list {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .injection-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid #2E7D32;
+            font-size: 14px;
+        }
+
+        .injection-item strong {
+            display: block;
+            color: #2E7D32;
+            margin-bottom: 5px;
+        }
+
+        .injection-item button {
+            background: #E53935;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .injection-item button:hover {
+            background: #C62828;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .btn-group .btn {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .app-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .header-right {
+                flex-direction: column;
+                width: 100%;
+                gap: 10px;
+            }
+
+            .animals-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 15px;
+            }
+
+            .auth-box {
+                padding: 25px;
+            }
+
+            .modal-content {
+                padding: 20px;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo h1 {
+                font-size: 2em;
+            }
+
+            .animals-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="authPage" class="auth-container">
+        <div class="auth-box">
+            <div class="logo">
+                <h1>🐄 NAAM</h1>
+                <p>Animal Management System</p>
+            </div>
+
+            <div id="authMessage" class="message"></div>
+
+            <!-- Login Form -->
+            <div id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" placeholder="example@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="Enter password" required>
+                </div>
+
+                <button class="btn btn-primary" onclick="handleLogin()">Login</button>
+
+                <div class="toggle-text">
+                    Don't have an account? <a onclick="toggleForm()">Sign Up</a>
+                </div>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signupForm" class="auth-form hidden">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="signupName" placeholder="John Doe" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="signupEmail" placeholder="example@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signupPassword" placeholder="Enter password" required>
+                </div>
+
+                <button class="btn btn-primary" onclick="handleSignup()">Create Account</button>
+
+                <div class="toggle-text">
+                    Already have an account? <a onclick="toggleForm()">Login</a>
+                </div>
+            </div>
+
+            <!-- Verification Form -->
+            <div id="verificationForm" class="auth-form hidden">
+                <h3 style="text-align: center; margin-bottom: 20px; color: #333;">Verify Your Account</h3>
+                <p style="text-align: center; margin-bottom: 20px; color: #666; font-size: 14px;">
+                    Enter the 6-digit code sent to your email
+                </p>
+
+                <div class="form-group">
+                    <input type="text" id="verificationCode" maxlength="6" placeholder="000000" style="text-align: center; font-size: 24px; letter-spacing: 10px; font-weight: bold;" required>
+                </div>
+
+                <button class="btn btn-primary" onclick="handleVerify()">Verify</button>
+
+                <div class="toggle-text" style="margin-top: 15px;">
+                    Didn't receive code? <a onclick="resendCode()">Resend</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" class="app-container">
+        <div class="container">
+            <div class="app-header">
+                <h1>🐄 NAAM</h1>
+                <div class="header-right">
+                    <span class="user-info" id="userInfo"></span>
+                    <button class="logout-btn" onclick="handleLogout()">Logout</button>
+                </div>
+            </div>
+
+            <button class="add-btn" onclick="openAddModal()">+ Add New Animal</button>
+
+            <div class="animals-grid" id="animalsGrid"></div>
+        </div>
+    </div>
+
+    <!-- Animal Modal -->
+    <div id="animalModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Animal Details</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+
+            <div id="modalMessage" class="message"></div>
+
+            <div class="form-group">
+                <label>Animal Name *</label>
+                <input type="text" id="animalName" required>
+            </div>
+
+            <div class="form-group">
+                <label>Animal Type *</label>
+                <select id="animalType" required>
+                    <option value="">Select Type</option>
+                    <option value="Cow">Cow</option>
+                    <option value="Buffalo">Buffalo</option>
+                    <option value="Goat">Goat</option>
+                    <option value="Sheep">Sheep</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Photo</label>
+                <input type="file" id="photoUpload" accept="image/*" onchange="handlePhotoUpload(event)">
+                <div class="photo-preview" id="photoPreview">
+                    <img id="previewImg" alt="preview">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Inseminated Date</label>
+                <input type="date" id="inseminatedDate" onchange="updateGestation()">
+            </div>
+
+            <div class="form-group">
+                <label>Expected Delivery Date</label>
+                <input type="date" id="deliveryDate" onchange="updateGestation()">
+            </div>
+
+            <div id="gestationInfo" style="padding: 15px; background: #E8F5E9; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #2E7D32; display: none;">
+                <strong>Gestation Period:</strong> <span id="gestationDays"></span> days
+            </div>
+
+            <div class="form-group">
+                <label>Injection Details</label>
+                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <input type="date" id="injectionDate" style="flex: 1;">
+                    <input type="text" id="injectionInput" placeholder="Injection details" style="flex: 2;">
+                    <button class="btn btn-primary" onclick="addInjection()" style="width: auto; margin: 0;">Add</button>
+                </div>
+                <div class="injections-list" id="injectionsList"></div>
+            </div>
+
+            <div class="form-group">
+                <label>Calf Details</label>
+                <textarea id="calfDetails" rows="3" placeholder="Birth date, gender, weight, health status"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Additional Notes</label>
+                <textarea id="notes" rows="3" placeholder="Any other important information"></textarea>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="saveAnimal()">Save Animal</button>
+                <button class="btn btn-danger" id="deleteBtn" onclick="deleteAnimal()" style="display: none;">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-detect API base URL
+        let API_BASE = 'http://localhost:5000/api';
+        
+        // If accessed from a different host, use that host
+        if (window.location.hostname && window.location.hostname !== '' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+            API_BASE = `http://${window.location.hostname}:5000/api`;
+        }
+        
+        console.log('🌐 API Base URL:', API_BASE);
+        console.log('📱 Device Host:', window.location.hostname || 'file://');
+        
+        let currentUser = null;
+        let currentAnimalId = null;
+        let animals = [];
+        let injections = [];
+        let currentPhotoData = null;
+        let pendingUserId = null;
+        let isLoginMode = true;
+
+        // API Request Helper
+        async function apiRequest(endpoint, method = 'GET', data = null) {
+            try {
+                const options = {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include'
+                };
+                if (data) options.body = JSON.stringify(data);
+
+                const res = await fetch(`${API_BASE}${endpoint}`, options);
+                const result = await res.json();
+
+                if (!res.ok) throw new Error(result.error || 'Request failed');
+                return result;
+            } catch (err) {
+                console.error('API Error:', err);
+                throw err;
+            }
+        }
+
+        // Message Functions
+        function showMessage(msg, type = 'error', duration = 3000) {
+            const msgDiv = document.getElementById('authMessage') || document.getElementById('modalMessage');
+            if (msgDiv) {
+                msgDiv.className = `message ${type}`;
+                msgDiv.textContent = msg;
+                if (duration) setTimeout(() => msgDiv.className = 'message hidden', duration);
+            }
+        }
+
+        // Auth Functions
+        function toggleForm() {
+            isLoginMode = !isLoginMode;
+            document.getElementById('loginForm').classList.toggle('hidden');
+            document.getElementById('signupForm').classList.toggle('hidden');
+            document.getElementById('authMessage').className = 'message';
+        }
+
+        async function handleLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                showMessage('Please fill in all fields');
+                return;
+            }
+
+            try {
+                const res = await apiRequest('/login', 'POST', { email, password });
+                if (res.requires_verification) {
+                    pendingUserId = res.user_id;
+                    document.getElementById('loginForm').classList.add('hidden');
+                    document.getElementById('signupForm').classList.add('hidden');
+                    document.getElementById('verificationForm').classList.remove('hidden');
+                    showMessage('Please verify your account', 'success', 0);
+                } else {
+                    currentUser = res.user;
+                    showApp();
+                }
+            } catch (err) {
+                showMessage(err.message);
+            }
+        }
+
+        async function handleSignup() {
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+
+            if (!name || !email || !password) {
+                showMessage('Please fill in all fields');
+                return;
+            }
+
+            try {
+                const res = await apiRequest('/register', 'POST', { name, email, password });
+                pendingUserId = res.user_id;
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('signupForm').classList.add('hidden');
+                document.getElementById('verificationForm').classList.remove('hidden');
+                showMessage(res.message, 'success', 0);
+            } catch (err) {
+                showMessage(err.message);
+            }
+        }
+
+        async function handleVerify() {
+            const code = document.getElementById('verificationCode').value;
+            if (!code || code.length !== 6) {
+                showMessage('Enter a 6-digit code');
+                return;
+            }
+
+            try {
+                const res = await apiRequest('/verify', 'POST', { user_id: pendingUserId, code });
+                currentUser = res.user;
+                showApp();
+            } catch (err) {
+                showMessage(err.message);
+            }
+        }
+
+        async function resendCode() {
+            try {
+                const res = await apiRequest('/resend-code', 'POST', { user_id: pendingUserId });
+                showMessage(res.message, 'success');
+            } catch (err) {
+                showMessage(err.message);
+            }
+        }
+
+        async function handleLogout() {
+            try {
+                await apiRequest('/logout', 'POST');
+                currentUser = null;
+                animals = [];
+                document.getElementById('mainApp').classList.remove('active');
+                document.getElementById('authPage').style.display = 'flex';
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('signupForm').classList.add('hidden');
+                document.getElementById('verificationForm').classList.add('hidden');
+                document.getElementById('loginEmail').value = '';
+                document.getElementById('loginPassword').value = '';
+            } catch (err) {
+                showMessage(err.message);
+            }
+        }
+
+        // App Functions
+        async function showApp() {
+            document.getElementById('authPage').style.display = 'none';
+            document.getElementById('mainApp').classList.add('active');
+            document.getElementById('userInfo').textContent = `Welcome, ${currentUser.name}`;
+            await loadAnimals();
+            renderAnimals();
+        }
+
+        async function loadAnimals() {
+            try {
+                const res = await apiRequest('/animals');
+                animals = res.animals || [];
+            } catch (err) {
+                console.error('Error loading animals:', err);
+            }
+        }
+
+        function renderAnimals() {
+            const grid = document.getElementById('animalsGrid');
+            grid.innerHTML = '';
+
+            if (animals.length === 0) {
+                grid.innerHTML = '<p style="color: white; grid-column: 1/-1; text-align: center;">No animals yet. Click "Add New Animal" to get started!</p>';
+                return;
+            }
+
+            animals.forEach(animal => {
+                const card = document.createElement('div');
+                card.className = 'animal-card';
+                card.onclick = () => openEditModal(animal);
+
+                const img = animal.photo_path 
+                    ? `http://localhost:5000/api/uploads/${animal.photo_path}`
+                    : 'https://via.placeholder.com/250x200?text=No+Image';
+
+                card.innerHTML = `
+                    <img src="${img}" alt="${animal.name}" onerror="this.src='https://via.placeholder.com/250x200?text=No+Image'">
+                    <div class="animal-info">
+                        <h3>${animal.name}</h3>
+                        <p>${animal.animal_type}</p>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function openAddModal() {
+            currentAnimalId = null;
+            injections = [];
+            currentPhotoData = null;
+            document.getElementById('modalTitle').textContent = 'Add New Animal';
+            document.getElementById('deleteBtn').style.display = 'none';
+            resetForm();
+            document.getElementById('animalModal').classList.add('active');
+        }
+
+        function openEditModal(animal) {
+            currentAnimalId = animal.id;
+            injections = animal.injections || [];
+            currentPhotoData = null;
+
+            document.getElementById('modalTitle').textContent = 'Edit Animal';
+            document.getElementById('animalName').value = animal.name;
+            document.getElementById('animalType').value = animal.animal_type;
+            document.getElementById('inseminatedDate').value = animal.inseminated_date || '';
+            document.getElementById('deliveryDate').value = animal.delivery_date || '';
+            document.getElementById('calfDetails').value = animal.calf_details || '';
+            document.getElementById('notes').value = animal.notes || '';
+            document.getElementById('injectionDate').value = '';
+            document.getElementById('injectionInput').value = '';
+
+            if (animal.photo_path) {
+                document.getElementById('previewImg').src = `http://localhost:5000/api/uploads/${animal.photo_path}`;
+                document.getElementById('photoPreview').style.display = 'block';
+            } else {
+                document.getElementById('photoPreview').style.display = 'none';
+            }
+
+            document.getElementById('deleteBtn').style.display = 'block';
+            updateGestation();
+            renderInjections();
+            document.getElementById('animalModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('animalModal').classList.remove('active');
+        }
+
+        function resetForm() {
+            document.getElementById('animalName').value = '';
+            document.getElementById('animalType').value = '';
+            document.getElementById('inseminatedDate').value = '';
+            document.getElementById('deliveryDate').value = '';
+            document.getElementById('calfDetails').value = '';
+            document.getElementById('notes').value = '';
+            document.getElementById('injectionDate').value = '';
+            document.getElementById('injectionInput').value = '';
+            document.getElementById('photoUpload').value = '';
+            document.getElementById('photoPreview').style.display = 'none';
+            document.getElementById('gestationInfo').style.display = 'none';
+            document.getElementById('modalMessage').className = 'message';
+        }
+
+        function handlePhotoUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (evt) => {
+                    currentPhotoData = evt.target.result;
+                    document.getElementById('previewImg').src = currentPhotoData;
+                    document.getElementById('photoPreview').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function addInjection() {
+            const date = document.getElementById('injectionDate').value;
+            const details = document.getElementById('injectionInput').value.trim();
+            
+            if (!date || !details) {
+                showMessage('Please fill in injection date and details');
+                return;
+            }
+
+            injections.push({ date, details });
+            document.getElementById('injectionDate').value = '';
+            document.getElementById('injectionInput').value = '';
+            renderInjections();
+        }
+
+        function removeInjection(index) {
+            injections.splice(index, 1);
+            renderInjections();
+        }
+
+        function renderInjections() {
+            const list = document.getElementById('injectionsList');
+            if (injections.length === 0) {
+                list.style.display = 'none';
+                return;
+            }
+
+            list.style.display = 'block';
+            list.innerHTML = '<strong style="display: block; margin-bottom: 10px;">Injection History:</strong>';
+            injections.forEach((inj, idx) => {
+                const item = document.createElement('div');
+                item.className = 'injection-item';
+                item.innerHTML = `
+                    <strong>${inj.date}</strong>
+                    <div>${inj.details}</div>
+                    <button onclick="removeInjection(${idx})">Remove</button>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function updateGestation() {
+            const insem = document.getElementById('inseminatedDate').value;
+            const deliv = document.getElementById('deliveryDate').value;
+
+            if (insem && deliv) {
+                const days = Math.floor((new Date(deliv) - new Date(insem)) / (1000 * 60 * 60 * 24));
+                document.getElementById('gestationDays').textContent = days;
+                document.getElementById('gestationInfo').style.display = 'block';
+            }
+        }
+
+        async function saveAnimal() {
+            const name = document.getElementById('animalName').value;
+            const type = document.getElementById('animalType').value;
+
+            if (!name || !type) {
+                showMessage('Name and type are required', 'error');
+                return;
+            }
+
+            const data = {
+                name,
+                type,
+                inseminatedDate: document.getElementById('inseminatedDate').value || null,
+                deliveryDate: document.getElementById('deliveryDate').value || null,
+                calfDetails: document.getElementById('calfDetails').value,
+                notes: document.getElementById('notes').value,
+                injections
+            };
+
+            if (currentPhotoData) {
+                data.photoData = currentPhotoData;
+            }
+
+            try {
+                const endpoint = currentAnimalId ? `/animals/${currentAnimalId}` : '/animals';
+                const method = currentAnimalId ? 'PUT' : 'POST';
+                const res = await apiRequest(endpoint, method, data);
+                showMessage('Animal saved successfully!', 'success');
+                await loadAnimals();
+                renderAnimals();
+                closeModal();
+            } catch (err) {
+                showMessage(err.message);
+            }
+        }
+
+        async function deleteAnimal() {
+            if (!confirm('Delete this animal?')) return;
+            try {
+                await apiRequest(`/animals/${currentAnimalId}`, 'DELETE');
+                showMessage('Animal deleted!', 'success', 2000);
+                await loadAnimals();
+                renderAnimals();
+                closeModal();
+            } catch (err) {
+                showMessage(err.message);
+            }
+        }
+
+        // Check auth on load
+        window.addEventListener('load', async () => {
+            try {
+                const res = await apiRequest('/current-user');
+                currentUser = res.user;
+                showApp();
+            } catch (err) {
+                // Not logged in, stay on auth page
+            }
+        });
+    </script>
+</body>
+</html>
