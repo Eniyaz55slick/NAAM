@@ -468,7 +468,7 @@
                     <input type="password" id="loginPassword" placeholder="Enter password" required>
                 </div>
 
-                <button class="btn btn-primary" onclick="handleLogin()">Login</button>
+                <button class="btn btn-primary" type="button" onclick="handleLogin()">Login</button>
 
                 <div class="toggle-text">
                     Don't have an account? <a onclick="toggleForm()">Sign Up</a>
@@ -492,7 +492,7 @@
                     <input type="password" id="signupPassword" placeholder="Enter password" required>
                 </div>
 
-                <button class="btn btn-primary" onclick="handleSignup()">Create Account</button>
+                <button class="btn btn-primary" type="button" onclick="handleSignup()">Create Account</button>
 
                 <div class="toggle-text">
                     Already have an account? <a onclick="toggleForm()">Login</a>
@@ -510,7 +510,7 @@
                     <input type="text" id="verificationCode" maxlength="6" placeholder="000000" style="text-align: center; font-size: 24px; letter-spacing: 10px; font-weight: bold;" required>
                 </div>
 
-                <button class="btn btn-primary" onclick="handleVerify()">Verify</button>
+                <button class="btn btn-primary" type="button" onclick="handleVerify()">Verify</button>
 
                 <div class="toggle-text" style="margin-top: 15px;">
                     Didn't receive code? <a onclick="resendCode()">Resend</a>
@@ -526,11 +526,11 @@
                 <h1>🐄 NAAM</h1>
                 <div class="header-right">
                     <span class="user-info" id="userInfo"></span>
-                    <button class="logout-btn" onclick="handleLogout()">Logout</button>
+                    <button class="logout-btn" type="button" onclick="handleLogout()">Logout</button>
                 </div>
             </div>
 
-            <button class="add-btn" onclick="openAddModal()">+ Add New Animal</button>
+            <button class="add-btn" type="button" onclick="openAddModal()">+ Add New Animal</button>
 
             <div class="animals-grid" id="animalsGrid"></div>
         </div>
@@ -541,7 +541,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2 id="modalTitle">Animal Details</h2>
-                <button class="close-btn" onclick="closeModal()">&times;</button>
+                <button class="close-btn" type="button" onclick="closeModal()">&times;</button>
             </div>
 
             <div id="modalMessage" class="message"></div>
@@ -589,7 +589,7 @@
                 <div style="display: flex; gap: 10px; margin-bottom: 10px;">
                     <input type="date" id="injectionDate" style="flex: 1;">
                     <input type="text" id="injectionInput" placeholder="Injection details" style="flex: 2;">
-                    <button class="btn btn-primary" onclick="addInjection()" style="width: auto; margin: 0;">Add</button>
+                    <button class="btn btn-primary" type="button" onclick="addInjection()" style="width: auto; margin: 0;">Add</button>
                 </div>
                 <div class="injections-list" id="injectionsList"></div>
             </div>
@@ -605,31 +605,32 @@
             </div>
 
             <div class="btn-group">
-                <button class="btn btn-primary" onclick="saveAnimal()">Save Animal</button>
-                <button class="btn btn-danger" id="deleteBtn" onclick="deleteAnimal()" style="display: none;">Delete</button>
+                <button class="btn btn-primary" type="button" onclick="saveAnimal()">Save Animal</button>
+                <button class="btn btn-danger" id="deleteBtn" type="button" onclick="deleteAnimal()" style="display: none;">Delete</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Auto-detect API base URL
-        const API_BASE = 'https://naam-al8p.onrender.com/api';
-        
-        // If accessed from a different host, use that host
-        if (window.location.hostname && window.location.hostname !== '' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-            API_BASE = `http://${window.location.hostname}:5000/api`;
-        }
-        
-        console.log('🌐 API Base URL:', API_BASE);
-        console.log('📱 Device Host:', window.location.hostname || 'file://');
-        
+        // Declare all variables at the top
+        let API_BASE = 'https://naam-al8p.onrender.com/api';
+        let isLoginMode = true;
         let currentUser = null;
         let currentAnimalId = null;
         let animals = [];
         let injections = [];
         let currentPhotoData = null;
         let pendingUserId = null;
-        let isLoginMode = true;
+
+        // Auto-detect API base URL for local development
+        if (window.location.hostname && window.location.hostname !== '' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+            if (!window.location.hostname.includes('github')) {
+                API_BASE = `http://${window.location.hostname}:5000/api`;
+            }
+        }
+        
+        console.log('🌐 API Base URL:', API_BASE);
+        console.log('📱 Device Host:', window.location.hostname || 'file://');
 
         // API Request Helper
         async function apiRequest(endpoint, method = 'GET', data = null) {
@@ -793,7 +794,7 @@
                 card.onclick = () => openEditModal(animal);
 
                 const img = animal.photo_path 
-                    ? `http://localhost:5000/api/uploads/${animal.photo_path}`
+                    ? `https://naam-al8p.onrender.com/api/uploads/${animal.photo_path}`
                     : 'https://via.placeholder.com/250x200?text=No+Image';
 
                 card.innerHTML = `
@@ -833,7 +834,7 @@
             document.getElementById('injectionInput').value = '';
 
             if (animal.photo_path) {
-                document.getElementById('previewImg').src = `http://localhost:5000/api/uploads/${animal.photo_path}`;
+                document.getElementById('previewImg').src = `https://naam-al8p.onrender.com/api/uploads/${animal.photo_path}`;
                 document.getElementById('photoPreview').style.display = 'block';
             } else {
                 document.getElementById('photoPreview').style.display = 'none';
@@ -912,7 +913,7 @@
                 item.innerHTML = `
                     <strong>${inj.date}</strong>
                     <div>${inj.details}</div>
-                    <button onclick="removeInjection(${idx})">Remove</button>
+                    <button type="button" onclick="removeInjection(${idx})">Remove</button>
                 `;
                 list.appendChild(item);
             });
@@ -955,7 +956,7 @@
             try {
                 const endpoint = currentAnimalId ? `/animals/${currentAnimalId}` : '/animals';
                 const method = currentAnimalId ? 'PUT' : 'POST';
-                const res = await apiRequest(endpoint, method, data);
+                await apiRequest(endpoint, method, data);
                 showMessage('Animal saved successfully!', 'success');
                 await loadAnimals();
                 renderAnimals();
