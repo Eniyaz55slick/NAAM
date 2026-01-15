@@ -60,3 +60,6 @@ if __name__ == '__main__':
     print("🔌 API: http://localhost:5000/api")
     print("="*50)
     app.run(debug=debug, host='0.0.0.0', port=port)
+
+# Create app for gunicorn
+app = create_app()
