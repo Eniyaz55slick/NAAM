@@ -1,2 +1,2 @@
 # NAAM
-animal farm managemen
+animal farm management
