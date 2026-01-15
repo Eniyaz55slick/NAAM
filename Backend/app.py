@@ -1,3 +1,4 @@
+import os
 from flask import Flask, jsonify
 from flask_cors import CORS
 from config import Config
@@ -49,10 +50,13 @@ def create_app():
 
 if __name__ == '__main__':
     app = create_app()
+    port = int(os.getenv('PORT', 5000))
+    debug = os.getenv('FLASK_ENV') == 'development'
+    
     print("="*50)
     print("🐄 NAAM Backend Server Starting...")
     print("="*50)
-    print("📍 Server: http://localhost:5000")
-    print("📍 API: http://localhost:5000/api")
+    print("🌐 Server: http://localhost:5000")
+    print("🔌 API: http://localhost:5000/api")
     print("="*50)
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=debug, host='0.0.0.0', port=port)
