@@ -14,10 +14,11 @@ def create_app():
     
     # Enable CORS for frontend
     CORS(app, 
-         supports_credentials=True,
-         resources={r"/api/*": {"origins": "*"}},
-         allow_headers=["Content-Type"],
-         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+     supports_credentials=True,
+     origins=["*"],  # Allow all for now
+     allow_headers=["Content-Type"],
+     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+   
     
     # Initialize database
     db.init_app(app)
